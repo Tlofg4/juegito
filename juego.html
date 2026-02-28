@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MateLava</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #090915;
+            color: #fff;
+        }
+
+        .screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ── MENU & RESULTS ── */
+        #menuScreen,
+        #resultScreen {
+            align-items: center;
+            justify-content: center;
+        }
+
+        #menuScreen {
+            background: radial-gradient(ellipse at 50% 0%, #1a0533, #090915 65%);
+        }
+
+        .mtitle {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: clamp(2rem, 5vw, 4.5rem);
+            background: linear-gradient(135deg, #ff6a00, #ffd700, #ff4500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px rgba(255, 130, 0, .7));
+            margin-bottom: .15em;
+            text-align: center;
+        }
+
+        .lfloor {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(transparent, #ff450040 50%, #ff4500aa);
+            pointer-events: none;
+        }
+
+        .btn {
+            font-family: 'Orbitron', monospace;
+            font-size: .78rem;
+            font-weight: 700;
+            padding: .7em 1.8em;
+            border: 2px solid;
+            border-radius: 8px;
+            cursor: pointer;
+            background: transparent;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            transition: all .2s;
+        }
+
+        .bg {
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+
+        .bg:hover {
+            background: #ffd700;
+            color: #000;
+            box-shadow: 0 0 22px #ffd700;
+        }
+
+        .bgr {
+            border-color: rgba(255, 255, 255, .3);
+            color: rgba(255, 255, 255, .6);
+        }
+
+        .bgr:hover {
+            border-color: #fff;
+            color: #fff;
+        }
+
+        .bred {
+            border-color: #ff4500;
+            color: #ff4500;
+            padding: .35em .85em;
+            font-size: .67rem;
+        }
+
+        .bred:hover {
+            background: #ff4500;
+            color: #fff;
+        }
+
+        .mrow {
+            display: flex;
+            gap: .7rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 1.1rem;
+        }
+
+        .ps-btn {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            font-weight: 900;
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            border: 3px solid rgba(255, 255, 255, .13);
+            cursor: pointer;
+            background: rgba(255, 255, 255, .04);
+            color: rgba(255, 255, 255, .22);
+            transition: all .2s;
+        }
+
+        .ps-btn[data-n="2"].on {
+            border-color: #00e5ff;
+            color: #00e5ff;
+            box-shadow: 0 0 14px #00e5ff44;
+        }
+
+        .ps-btn[data-n="3"].on {
+            border-color: #76ff03;
+            color: #76ff03;
+            box-shadow: 0 0 14px #76ff0344;
+        }
+
+        .ps-btn[data-n="4"].on {
+            border-color: #ffab40;
+            color: #ffab40;
+            box-shadow: 0 0 14px #ffab4044;
+        }
+
+        .dbt {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: .9rem;
+            padding: .4em 1.1em;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, .16);
+            background: transparent;
+            color: rgba(255, 255, 255, .37);
+            cursor: pointer;
+            transition: all .2s;
+            text-transform: uppercase;
+        }
+
+        .dbt.on {
+            border-color: #ffd700;
+            color: #ffd700;
+            background: rgba(255, 215, 0, .08);
+        }
+
+        /* ══ GAME SCREEN ══ */
+        #gameScreen {
+            background: #090915;
+            /* Flex properties apply natively to children */
+        }
+
+        /* HUD */
+        #hud {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .3rem .8rem;
+            background: rgba(0, 0, 0, .75);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            gap: .5rem;
+        }
+
+        .hq {
+            font-family: 'Orbitron', monospace;
+            font-size: .68rem;
+            color: rgba(255, 255, 255, .4);
+            white-space: nowrap;
+        }
+
+        #tbar {
+            flex: 1;
+            max-width: 180px;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, .1);
+            overflow: hidden;
+        }
+
+        #tfill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width .85s linear, background .4s;
+        }
+
+        #tnum {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffd700;
+            min-width: 2ch;
+            text-align: right;
+        }
+
+        #tnum.urg {
+            color: #ff4500;
+            animation: blink .4s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .35
+            }
+        }
+
+        /* SPLIT: Left 55% = chart, Right 45% = question */
+        #split {
+            flex: 1 1 0;
+            display: flex;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        /* ═══ LEFT: CANVAS CHART ═══ */
+        #barSide {
+            flex: 0 0 50%;
+            height: 100%;
+            background: #05050f;
+            border-right: 2px solid rgba(255, 255, 255, .08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #barCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ═══ RIGHT: QUESTION ═══ */
+        #qSide {
+            flex: 0 0 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, #0b0b1c, #07070e);
+            overflow: hidden;
+        }
+
+        #turnBanner {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .5rem .9rem;
+            border-bottom: 3px solid;
+            transition: border-color .25s, background .25s;
+        }
+
+        #tTag {
+            font-size: .58rem;
+            color: rgba(255, 255, 255, .37);
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            margin-bottom: .1rem;
+        }
+
+        #tName {
+            font-family: 'Orbitron', monospace;
+            font-size: .95rem;
+            font-weight: 900;
+        }
+
+        #tEmoji {
+            font-size: 1.9rem;
+        }
+
+        #qHead {
+            flex: 0 0 auto;
+            padding: .65rem 1rem;
+            text-align: center;
+            background: rgba(0, 0, 0, .3);
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        #qText {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(.95rem, 2.3vw, 1.65rem);
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 215, 0, .35);
+            line-height: 1.3;
+        }
+
+        /* 4 ANSWER BUTTONS */
+        #aGrid {
+            flex: 0 1 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .8rem;
+            padding: 1rem;
+            margin: auto 0;
+            max-width: 500px;
+            align-self: center;
+            width: 100%;
+        }
+
+        .ab {
+            border-radius: 12px;
+            border: 3px solid rgba(255, 255, 255, .12);
+            background: rgba(255, 255, 255, .055);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            cursor: pointer;
+            text-align: center;
+            transition: transform .17s, border-color .17s, background .17s, box-shadow .17s;
+            padding: .8rem .5rem;
+            min-height: 100px;
+        }
+
+        .ab:hover:not(.lk) {
+            transform: scale(1.04);
+            border-color: var(--pc, #fff);
+            background: rgba(255, 255, 255, .12);
+        }
+
+        .ab-L {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: clamp(.9rem, 2vw, 1.35rem);
+            width: 40px;
+            height: 40px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, .1);
+            flex-shrink: 0;
+        }
+
+        .ab-T {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: clamp(.9rem, 1.8vw, 1.3rem);
+            line-height: 1.25;
+            word-wrap: break-word;
+        }
+
+        .ab.ok {
+            border-color: #76ff03 !important;
+            background: rgba(118, 255, 3, .2) !important;
+            box-shadow: 0 0 26px rgba(118, 255, 3, .5), 0 0 7px rgba(118, 255, 3, .3) inset !important;
+            animation: cpop .33s;
+        }
+
+        .ab.no {
+            border-color: #ff4081 !important;
+            background: rgba(255, 64, 129, .18) !important;
+        }
+
+        .ab.rv {
+            border-color: #76ff03 !important;
+            background: rgba(118, 255, 3, .09) !important;
+            box-shadow: 0 0 16px rgba(118, 255, 3, .3) !important;
+        }
+
+        .ab.lk {
+            pointer-events: none;
+        }
+
+        @keyframes cpop {
+            0% {
+                transform: scale(1)
+            }
+
+            40% {
+                transform: scale(1.07)
+            }
+
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        .pass-btn {
+            font-family: 'Orbitron', monospace;
+            font-size: .75rem;
+            font-weight: 700;
+            padding: .6em 1.5em;
+            border: 2px solid rgba(255, 255, 255, .2);
+            border-radius: 20px;
+            cursor: pointer;
+            background: transparent;
+            color: rgba(255, 255, 255, .5);
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            transition: all .2s;
+            grid-column: 1 / -1;
+            margin: .4rem auto 0;
+            opacity: .8;
+        }
+
+        .pass-btn:hover:not(.lk) {
+            border-color: #ffd700;
+            color: #ffd700;
+            opacity: 1;
+            box-shadow: 0 0 15px rgba(255, 215, 0, .3);
+        }
+
+        #sBar {
+            flex: 0 0 auto;
+            display: flex;
+            gap: .4rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: .28rem .6rem;
+            border-top: 1px solid rgba(255, 255, 255, .06);
+            background: rgba(0, 0, 0, .25);
+        }
+
+        .sc {
+            font-family: 'Orbitron', monospace;
+            font-size: .6rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 16px;
+            border: 2px solid;
+            transition: all .2s;
+        }
+
+        .sc.ok {
+            background: rgba(118, 255, 3, .15);
+        }
+
+        .sc.fl {
+            background: rgba(255, 64, 129, .15);
+        }
+
+        .sc.sk {
+            background: rgba(255, 255, 255, .07);
+        }
+
+        /* RESULTS */
+        #resultScreen {
+            background: radial-gradient(ellipse at 50% 40%, #1a0a00, #090915 70%);
+            /* Already gets justify-center from above */
+        }
+
+        .rtitle {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1.7rem, 4.5vw, 3rem);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: .3em;
+        }
+
+        .rsub {
+            color: rgba(255, 255, 255, .4);
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            font-size: .78rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .podium {
+            display: flex;
+            align-items: flex-end;
+            gap: .6rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- MENU -->
+    <div id="menuScreen" class="screen">
+        <div class="lfloor"></div>
+        <h1 class="mtitle">🌋 MateLava</h1>
+        <p
+            style="color:rgba(255,255,255,.5);letter-spacing:.18em;font-size:.85rem;text-transform:uppercase;margin-bottom:1.6rem;">
+            Trivia Matemática · Supervivencia</p>
+        <div
+            style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:.8rem 1.4rem;max-width:400px;width:90%;margin-bottom:1.4rem;">
+            <div
+                style="font-size:.68rem;letter-spacing:.13em;color:rgba(255,255,255,.3);text-transform:uppercase;text-align:center;margin-bottom:.5rem;">
+                🎯 Turnos — cada jugador recibe su propia pregunta</div>
+            <div id="cinfo"></div>
+        </div>
+        <p
+            style="font-size:.68rem;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.45rem">
+            Jugadores</p>
+        <div class="mrow">
+            <button class="ps-btn" data-n="2" onclick="setP(2)">2</button>
+            <button class="ps-btn" data-n="3" onclick="setP(3)">3</button>
+            <button class="ps-btn" data-n="4" onclick="setP(4)">4</button>
+        </div>
+        <p
+            style="font-size:.68rem;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.45rem">
+            Dificultad</p>
+        <div class="mrow">
+            <button class="dbt on" data-d="super" onclick="setD('super')">🟢 Súper Fácil</button>
+            <button class="dbt" data-d="easy" onclick="setD('easy')">Fácil</button>
+            <button class="dbt" data-d="medium" onclick="setD('medium')">Medio</button>
+            <button class="dbt" data-d="hard" onclick="setD('hard')">Difícil</button>
+        </div>
+        <div class="mrow" style="margin-bottom:0">
+            <button class="btn bg" onclick="startGame()">▶ Jugar</button>
+            <button class="btn bgr"
+                onclick="alert('Cada jugador recibe una pregunta diferente.\n✓ Correcto → tu barra SUBE.\n✗ Error → tu barra BAJA.\nLa LAVA roja sube lentamente desde abajo.\nSi la lava alcanza tu barra → ¡eliminado!')">?
+                Ayuda</button>
+        </div>
+    </div>
+
+    <!-- JUEGO -->
+    <div id="gameScreen" class="screen hidden">
+        <div id="hud">
+            <div class="hq">🎯 Turno <span id="tc">1</span></div>
+            <div style="display:flex;align-items:center;gap:.4rem;flex:1;justify-content:center;">
+                <div id="tbar">
+                    <div id="tfill" style="width:100%"></div>
+                </div>
+                <div id="tnum">20</div>
+            </div>
+            <button class="btn bred" onclick="endGame()">✕ Salir</button>
+        </div>
+        <div id="split">
+            <div id="barSide"><canvas id="barCanvas"></canvas></div>
+            <div id="qSide">
+                <div id="turnBanner">
+                    <div>
+                        <div id="tTag">ES EL TURNO DE</div>
+                        <div id="tName">Jugador 1</div>
+                    </div>
+                    <div id="tEmoji">🚀</div>
+                </div>
+                <div id="qHead">
+                    <div id="qText">Preparando…</div>
+                </div>
+                <div id="aGrid">
+                    <div class="ab" id="ab0" onclick="onAns(0)">
+                        <div class="ab-L" id="al0">A</div>
+                        <div class="ab-T" id="at0">—</div>
+                    </div>
+                    <div class="ab" id="ab1" onclick="onAns(1)">
+                        <div class="ab-L" id="al1">B</div>
+                        <div class="ab-T" id="at1">—</div>
+                    </div>
+                    <div class="ab" id="ab2" onclick="onAns(2)">
+                        <div class="ab-L" id="al2">C</div>
+                        <div class="ab-T" id="at2">—</div>
+                    </div>
+                    <div class="ab" id="ab3" onclick="onAns(3)">
+                        <div class="ab-L" id="al3">D</div>
+                        <div class="ab-T" id="at3">—</div>
+                    </div>
+                    <button class="pass-btn" id="btnPass" onclick="onPass()">⏭️ No sé (Pasar)</button>
+                </div>
+                <div id="sBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="resultScreen" class="screen hidden">
+        <div class="rtitle" id="rTitle">🏆 ¡Ganador!</div>
+        <p class="rsub" id="rSub"></p>
+        <div class="podium" id="podium"></div>
+        <div class="mrow">
+            <button class="btn bg" onclick="startGame()">▶ Repetir</button>
+            <button class="btn bgr" onclick="goMenu()">← Menú</button>
+        </div>
+    </div>
+
+    <script>
+        // ─── PLAYERS ───
+        const PC = [
+            { name: 'Jugador 1', sh: 'J1', color: '#1e6aff', emoji: '🚀' },
+            { name: 'Jugador 2', sh: 'J2', color: '#76c800', emoji: '⭐' },
+            { name: 'Jugador 3', sh: 'J3', color: '#dd00bb', emoji: '🔥' },
+            { name: 'Jugador 4', sh: 'J4', color: '#ff8800', emoji: '💎' },
+        ];
+
+        // ─── QUESTIONS ───
+        const QDB = {
+            super: [
+                { q: '3 + 4 = ?', o: ['5', '6', '7', '8'], a: 2 }, { q: '10 − 3 = ?', o: ['5', '6', '7', '9'], a: 2 },
+                { q: '5 × 2 = ?', o: ['8', '9', '10', '12'], a: 2 }, { q: '12 ÷ 4 = ?', o: ['2', '3', '4', '5'], a: 1 },
+                { q: 'Doble de 7 = ?', o: ['12', '13', '14', '15'], a: 2 }, { q: 'Mitad de 10 = ?', o: ['3', '4', '5', '6'], a: 2 },
+                { q: '8 + 9 = ?', o: ['15', '16', '17', '18'], a: 2 }, { q: '20 − 8 = ?', o: ['10', '11', '12', '14'], a: 2 },
+                { q: '3 × 5 = ?', o: ['10', '12', '15', '20'], a: 2 }, { q: '15 ÷ 3 = ?', o: ['3', '4', '5', '6'], a: 2 },
+                { q: '6 + 7 = ?', o: ['11', '12', '13', '14'], a: 1 }, { q: '9 − 4 = ?', o: ['3', '4', '5', '6'], a: 2 },
+                { q: '4 × 4 = ?', o: ['12', '14', '16', '18'], a: 2 }, { q: '18 ÷ 2 = ?', o: ['7', '8', '9', '10'], a: 2 },
+                { q: 'Triple de 5 = ?', o: ['10', '12', '15', '20'], a: 2 }, { q: '50 − 20 = ?', o: ['20', '25', '30', '35'], a: 2 },
+                { q: '7 × 3 = ?', o: ['18', '20', '21', '24'], a: 2 }, { q: '24 ÷ 6 = ?', o: ['3', '4', '5', '6'], a: 1 },
+                { q: '11 + 11 = ?', o: ['20', '21', '22', '23'], a: 2 }, { q: '13 − 6 = ?', o: ['5', '6', '7', '8'], a: 2 },
+                { q: '6 × 6 = ?', o: ['30', '34', '36', '38'], a: 2 }, { q: 'Mitad de 18 = ?', o: ['7', '8', '9', '10'], a: 2 },
+                { q: '5 + 8 = ?', o: ['12', '13', '14', '15'], a: 1 }, { q: '16 ÷ 4 = ?', o: ['3', '4', '5', '6'], a: 1 },
+                { q: 'Doble de 9 = ?', o: ['16', '17', '18', '20'], a: 2 }, { q: '30 − 15 = ?', o: ['13', '14', '15', '16'], a: 2 },
+                { q: '2 × 8 = ?', o: ['14', '16', '18', '20'], a: 1 }, { q: '100 ÷ 10 = ?', o: ['5', '8', '10', '20'], a: 2 },
+                { q: 'Días en una semana', o: ['5', '6', '7', '8'], a: 2 }, { q: 'Meses en un año', o: ['10', '11', '12', '13'], a: 2 },
+            ],
+            easy: [
+                { q: '12 × 8 = ?', o: ['84', '88', '96', '104'], a: 2 }, { q: '√81 = ?', o: ['7', '8', '9', '10'], a: 2 },
+                { q: '7² = ?', o: ['42', '47', '49', '56'], a: 2 }, { q: '50% de 80 = ?', o: ['30', '35', '40', '45'], a: 2 },
+                { q: '3³ = ?', o: ['9', '18', '27', '33'], a: 2 }, { q: 'MCM de 4 y 6', o: ['8', '10', '12', '24'], a: 2 },
+                { q: 'MCD de 12 y 18', o: ['2', '3', '6', '9'], a: 2 }, { q: '½ + ¼ = ?', o: ['2/6', '3/4', '1/2', '1/6'], a: 1 },
+                { q: '9 × 9 = ?', o: ['72', '81', '90', '99'], a: 1 }, { q: '1000 ÷ 25 = ?', o: ['30', '35', '40', '45'], a: 2 },
+                { q: 'Área rect 6×9 = ?', o: ['48', '52', '54', '60'], a: 2 }, { q: '25% de 200 = ?', o: ['40', '50', '55', '60'], a: 1 },
+                { q: '5! = ?', o: ['60', '100', '120', '150'], a: 2 }, { q: '13² = ?', o: ['149', '169', '196', '121'], a: 1 },
+                { q: '15 × 6 = ?', o: ['80', '85', '90', '95'], a: 2 }, { q: '100 − 37 = ?', o: ['53', '63', '73', '67'], a: 1 },
+                { q: '200 ÷ 8 = ?', o: ['22', '24', '25', '30'], a: 2 }, { q: 'Perímetro □ l=7', o: ['21', '24', '28', '32'], a: 2 },
+            ],
+            medium: [
+                { q: 'x + 5 = 12, ¿x?', o: ['5', '6', '7', '8'], a: 2 }, { q: '2x − 3 = 11, x?', o: ['5', '6', '7', '8'], a: 2 },
+                { q: 'Área ⬤ r=5 (π=3.14)', o: ['62.8', '75.4', '78.5', '80'], a: 2 },
+                { q: 'Pendiente (0,2)→(4,10)', o: ['1', '1.5', '2', '2.5'], a: 2 },
+                { q: '(−3)² = ?', o: ['−9', '6', '9', '12'], a: 2 }, { q: 'Hipotenusa 3−4−?', o: ['5', '6', '7', '8'], a: 0 },
+                { q: '15% de 200 = ?', o: ['20', '25', '30', '35'], a: 2 }, { q: '2⁵ = ?', o: ['16', '24', '32', '64'], a: 2 },
+                { q: 'log₁₀(1000) = ?', o: ['2', '3', '4', '10'], a: 1 }, { q: 'sen(30°) = ?', o: ['0', '0.5', '√2/2', '1'], a: 1 },
+                { q: 'cos(60°) = ?', o: ['0', '0.5', '√3/2', '1'], a: 1 }, { q: 'x²·x³ = ?', o: ['x⁵', 'x⁶', '2x⁵', 'x'], a: 0 },
+                { q: '4! = ?', o: ['8', '16', '24', '32'], a: 2 }, { q: 'y=2x+1, x=4 → y?', o: ['7', '8', '9', '10'], a: 2 },
+                { q: 'Factor x²−9', o: ['(x−3)²', '(x+3)(x−3)', '(x+9)(x−1)', '—'], a: 1 },
+                { q: 'Ángulos: 60°,70°,?', o: ['40°', '50°', '60°', '70°'], a: 1 },
+                { q: 'Área △ b=8,h=5', o: ['20', '25', '30', '40'], a: 0 },
+                { q: 'Suma ángulos △ = ?', o: ['90°', '180°', '270°', '360°'], a: 1 },
+            ],
+            hard: [
+                { q: 'x²−5x+6=0', o: ['x=1,6', 'x=2,3', 'x=2,4', 'x=−2,−3'], a: 1 },
+                { q: "f'(3x²) = ?", o: ['3x', '6x', '6x²', 'x³'], a: 1 },
+                { q: 'lím x→0 (senx)/x = ?', o: ['0', '½', '1', '∞'], a: 2 },
+                { q: '∫2x dx = ?', o: ['x+C', '2x+C', 'x²+C', '2x²+C'], a: 2 },
+                { q: 'i² = ?', o: ['1', '−1', 'i', '−i'], a: 1 }, { q: 'Det [[2,1],[3,4]] = ?', o: ['5', '6', '7', '8'], a: 0 },
+                { q: 'log₂(x)=4 → x = ?', o: ['8', '12', '16', '20'], a: 2 }, { q: 'C(5,2) = ?', o: ['8', '10', '12', '20'], a: 1 },
+                { q: 'sen²θ+cos²θ = ?', o: ['0', '1', '2', '−1'], a: 1 }, { q: 'Área △ b=10,h=8', o: ['40', '60', '80', '100'], a: 0 },
+                { q: 'Razón: 2,6,18,54', o: ['2', '3', '4', '6'], a: 1 }, { q: 'tg(45°) = ?', o: ['0', '0.5', '1', '√3'], a: 2 },
+                { q: '1+2+…+10 = ?', o: ['45', '50', '55', '60'], a: 2 },
+                { q: 'Factor 4x²−1', o: ['(2x−1)²', '(2x+1)(2x−1)', '(4x+1)(x−1)', '—'], a: 1 },
+                { q: '8^(2/3) = ?', o: ['2', '4', '6', '8'], a: 1 }, { q: '√169 = ?', o: ['11', '12', '13', '14'], a: 2 },
+                { q: "Der. de sen(x) = ?", o: ['−cos(x)', 'cos(x)', '−sen(x)', 'tg(x)'], a: 1 },
+                { q: '3x+2=11 → x = ?', o: ['2', '3', '4', '5'], a: 1 },
+            ]
+        };
+
+        // ─── STATE ───
+        let nP = 2, diff = 'super';
+        let players = [], bank = [], gQIdx = 0;
+        let running = false, qActive = false;
+        let lavaRise = 0, lavaSpd = .25, maxTime = 20;
+        let loopId = null, lastTs = 0, timerInt = null, timeLeft = 20;
+        let turnQ = [], tQPos = 0, totalTurns = 0, curQ = null;
+        const DCFG = {
+            super: { lava: .45, time: 18, climb: 16, pen: 6 },
+            easy: { lava: .65, time: 15, climb: 14, pen: 7 },
+            medium: { lava: 1.2, time: 12, climb: 12, pen: 8 },
+            hard: { lava: 2.2, time: 9, climb: 10, pen: 9 },
+        };
+
+        // Canvas
+        const canvas = document.getElementById('barCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // ─── MENU ───
+        function setP(n) { nP = n; document.querySelectorAll('.ps-btn').forEach(b => b.classList.toggle('on', +b.dataset.n === n)); buildCI(); }
+        function setD(d) { diff = d; document.querySelectorAll('.dbt').forEach(b => b.classList.toggle('on', b.dataset.d === d)); }
+        function buildCI() {
+            const el = document.getElementById('cinfo'); if (!el) return; el.innerHTML = '';
+            for (let i = 0; i < nP; i++) {
+                const c = PC[i], r = document.createElement('div');
+                r.style.cssText = 'display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;font-size:.85rem;';
+                r.innerHTML = `<span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${c.color};flex-shrink:0"></span>
+      <span style="color:${c.color};font-weight:700;min-width:5.5rem">${c.name}</span>
+      <span style="color:rgba(255,255,255,.35)">→ hace clic en su turno</span>`;
+                el.appendChild(r);
+            }
+        }
+        function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+        function goMenu() { stop(); showScreen('menuScreen'); }
+        function stop() { running = false; clearInterval(timerInt); cancelAnimationFrame(loopId); }
+
+        function shuffleQ(raw) {
+            const ct = raw.o[raw.a]; const sh = [...raw.o].sort(() => Math.random() - .5);
+            return { text: raw.q, opts: sh, ci: sh.indexOf(ct) };
+        }
+
+        // ─── DRAW BAR CHART (canvas) ───
+        function resizeCanvas() {
+            const side = document.getElementById('barSide');
+            canvas.width = side.clientWidth;
+            canvas.height = side.clientHeight;
+        }
+
+        function drawChart() {
+            const W = canvas.width, H = canvas.height;
+            // Background
+            ctx.fillStyle = '#05050f';
+            ctx.fillRect(0, 0, W, H);
+
+            // Starfield
+            ctx.fillStyle = 'rgba(255,255,255,.35)';
+            for (let i = 0; i < 60; i++) {
+                const sx = (i * 173 % W), sy = (i * 97 % H);
+                ctx.fillRect(sx, sy, 1, 1);
+            }
+
+            // Grid lines (horizontal)
+            ctx.strokeStyle = 'rgba(255,255,255,.06)';
+            ctx.lineWidth = 1;
+            for (let p = 0; p <= 100; p += 20) {
+                const y = H - (p / 100) * H;
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+                ctx.fillStyle = 'rgba(255,255,255,.2)';
+                ctx.font = '9px Orbitron,monospace';
+                ctx.fillText(p + '%', 4, y - 3);
+            }
+
+            if (!players.length) return;
+
+            const pad = W * 0.08;
+            const total = W - pad * 2;
+            const gap = total * 0.05;
+            const barW = (total - gap * (nP - 1)) / nP;
+
+            players.forEach((p, pi) => {
+                const x = pad + pi * (barW + gap);
+                const barH = (p.pct / 100) * H;
+                const y = H - barH;
+
+                if (p.alive) {
+                    // Bar gradient
+                    const grad = ctx.createLinearGradient(x, y, x + barW, y);
+                    grad.addColorStop(0, p.color + 'ff');
+                    grad.addColorStop(0.55, p.color + 'cc');
+                    grad.addColorStop(1, p.color + '66');
+                    ctx.fillStyle = grad;
+                } else {
+                    ctx.fillStyle = '#333';
+                }
+
+                // Bar rectangle with rounded top
+                const r = 10;
+                ctx.beginPath();
+                ctx.moveTo(x, H);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.lineTo(x + barW - r, y);
+                ctx.quadraticCurveTo(x + barW, y, x + barW, y + r);
+                ctx.lineTo(x + barW, H);
+                ctx.closePath();
+                ctx.fill();
+
+                if (p.alive) {
+                    // Shine
+                    const shine = ctx.createLinearGradient(x, 0, x + barW * 0.4, 0);
+                    shine.addColorStop(0, 'rgba(255,255,255,.18)');
+                    shine.addColorStop(1, 'rgba(255,255,255,0)');
+                    ctx.fillStyle = shine;
+                    ctx.fillRect(x, y, barW * 0.4, barH);
+
+                    // Glow when danger
+                    const gap2 = p.pct - lavaRise;
+                    if (gap2 < 15) {
+                        ctx.shadowColor = '#ff4500'; ctx.shadowBlur = 20;
+                    }
+                    // Stroke border
+                    ctx.strokeStyle = p.color;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(x, H); ctx.lineTo(x, y + r);
+                    ctx.quadraticCurveTo(x, y, x + r, y);
+                    ctx.lineTo(x + barW - r, y);
+                    ctx.quadraticCurveTo(x + barW, y, x + barW, y + r);
+                    ctx.lineTo(x + barW, H); ctx.stroke();
+                    ctx.shadowBlur = 0;
+                }
+
+                // Emoji at top of bar
+                const emojiSize = Math.min(barW * 0.55, 36);
+                ctx.font = emojiSize + 'px serif';
+                ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+                ctx.fillText(p.alive ? p.emoji : '💀', x + barW / 2, y - 4);
+
+                // Player name below bar
+                ctx.font = 'bold 11px Orbitron,monospace';
+                ctx.fillStyle = p.alive ? p.color : '#555';
+                ctx.textBaseline = 'top';
+                ctx.fillText(p.sh, x + barW / 2, H - 20);
+
+                // Score
+                ctx.font = '10px Orbitron,monospace';
+                ctx.fillStyle = 'rgba(255,255,255,.5)';
+                ctx.fillText('✓' + p.score, x + barW / 2, H - 8);
+
+                ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+            });
+
+            // ── LAVA ──
+            const lH = (lavaRise / 100) * H;
+            if (lH > 0) {
+                // Lava body gradient
+                const lGrad = ctx.createLinearGradient(0, H - lH, 0, H);
+                lGrad.addColorStop(0, '#ff5500');
+                lGrad.addColorStop(0.3, '#dd1100');
+                lGrad.addColorStop(1, '#880000');
+                ctx.fillStyle = lGrad;
+                ctx.fillRect(0, H - lH, W, lH);
+
+                // Lava wavy top
+                const t = Date.now() / 1000;
+                ctx.beginPath();
+                ctx.moveTo(0, H - lH);
+                for (let x = 0; x <= W; x += 8) {
+                    const wy = Math.sin(x * 0.04 + t * 2) * 6 + Math.sin(x * 0.09 - t * 1.5) * 3;
+                    ctx.lineTo(x, H - lH + wy);
+                }
+                ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+                ctx.fillStyle = '#ff5500'; ctx.fill();
+
+                // Glowing top line
+                ctx.beginPath();
+                ctx.moveTo(0, H - lH);
+                for (let x = 0; x <= W; x += 8) {
+                    const wy = Math.sin(x * 0.04 + t * 2) * 6 + Math.sin(x * 0.09 - t * 1.5) * 3;
+                    ctx.lineTo(x, H - lH + wy);
+                }
+                ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 3;
+                ctx.shadowColor = '#ff6600'; ctx.shadowBlur = 12;
+                ctx.stroke(); ctx.shadowBlur = 0;
+
+                // Lava bubbles
+                const seed = Math.floor(t * 3);
+                for (let i = 0; i < 3; i++) {
+                    const bx = (seed * 53 + i * 137) % W;
+                    const by = H - lH + (i % 3) * 6 - 8;
+                    const br = 3 + i * 2;
+                    ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255,220,0,.4)'; ctx.fill();
+                }
+            }
+
+            // "LAVA" text if rising
+            if (lavaRise > 5) {
+                const lH2 = (lavaRise / 100) * H;
+                ctx.font = 'bold 12px Orbitron,monospace';
+                ctx.fillStyle = 'rgba(255,200,0,.7)';
+                ctx.textAlign = 'right';
+                ctx.fillText('🌋 ' + (lavaRise).toFixed(0) + '%', W - 6, H - lH2 + 14);
+                ctx.textAlign = 'left';
+            }
+        }
+
+        // ─── ANIMATION LOOP ───
+        function startLoop() {
+            cancelAnimationFrame(loopId); lastTs = 0; resizeCanvas();
+            function loop(ts) {
+                if (!running) return;
+                if (!lastTs) lastTs = ts;
+                const dt = Math.min((ts - lastTs) / 1000, .12); lastTs = ts;
+                lavaRise = Math.min(100, lavaRise + lavaSpd * dt);
+                checkElim();
+                drawChart();
+                loopId = requestAnimationFrame(loop);
+            }
+            loopId = requestAnimationFrame(loop);
+        }
+
+        window.addEventListener('resize', () => { if (running) resizeCanvas(); });
+
+        function checkElim() {
+            let alive = 0;
+            players.forEach(p => {
+                if (!p.alive) return;
+                if (lavaRise >= p.pct) { p.alive = false; updateChip(p.index, 'fl'); }
+                else alive++;
+            });
+            if (alive === 0 || (alive <= 1 && nP > 1 && players.some(p => !p.alive))) {
+                running = false; clearInterval(timerInt); setTimeout(showResults, 1200);
+            }
+        }
+
+        // ─── START ───
+        function startGame() {
+            running = true; lavaRise = 0; gQIdx = 0; totalTurns = 0;
+            const cfg = DCFG[diff]; lavaSpd = cfg.lava; maxTime = cfg.time;
+            bank = [...QDB[diff], ...QDB[diff], ...QDB[diff]].sort(() => Math.random() - .5);
+            players = [];
+            for (let i = 0; i < nP; i++) players.push({ ...PC[i], index: i, pct: 15, score: 0, alive: true });
+            showScreen('gameScreen');
+            buildSChips();
+            startLoop();
+            rebuildTQ(); setTimeout(nextTurn, 200);
+        }
+
+        // ─── TURNS ───
+        function rebuildTQ() { turnQ = players.filter(p => p.alive).map(p => p.index); tQPos = 0; }
+        function nextTurn() {
+            if (!running) return;
+            while (tQPos < turnQ.length && !players[turnQ[tQPos]].alive) tQPos++;
+            if (tQPos >= turnQ.length) { rebuildTQ(); if (!turnQ.length) { running = false; setTimeout(showResults, 400); return; } }
+            const pi = turnQ[tQPos]; const p = players[pi];
+            if (!p.alive) { tQPos++; nextTurn(); return; }
+            totalTurns++;
+            document.getElementById('tc').textContent = totalTurns;
+            if (gQIdx >= bank.length) { running = false; setTimeout(showResults, 400); return; }
+            curQ = shuffleQ(bank[gQIdx++]);
+            document.getElementById('qText').textContent = curQ.text;
+            for (let i = 0; i < 4; i++) {
+                const b = document.getElementById(`ab${i}`); b.className = 'ab'; b.style.setProperty('--pc', p.color);
+                document.getElementById(`at${i}`).textContent = curQ.opts[i];
+                document.getElementById(`al${i}`).style.cssText = `background:${p.color}2a;color:${p.color}`;
+            }
+            document.getElementById('btnPass').classList.remove('lk');
+            const bn = document.getElementById('turnBanner');
+            bn.style.borderColor = p.color;
+            bn.style.background = `linear-gradient(135deg,${p.color}22,rgba(0,0,0,.55))`;
+            document.getElementById('tName').textContent = p.name;
+            document.getElementById('tName').style.color = p.color;
+            document.getElementById('tEmoji').textContent = p.emoji;
+            updateChip(pi, 'active');
+            timeLeft = maxTime; updTimer(); clearInterval(timerInt);
+            setTimeout(() => { qActive = true; }, 60);
+            timerInt = setInterval(() => { timeLeft--; updTimer(); if (timeLeft <= 0) { clearInterval(timerInt); onTO(); } }, 1000);
+        }
+
+        function updTimer() {
+            const n = document.getElementById('tnum'), f = document.getElementById('tfill');
+            if (!n || !f) return;
+            n.textContent = timeLeft; n.className = timeLeft <= 4 ? 'urg' : '';
+            const p = (timeLeft / maxTime) * 100;
+            f.style.width = p + '%';
+            f.style.background = timeLeft <= 4 ? 'linear-gradient(90deg,#ff4500,#ff6a00)' : p > 50 ? 'linear-gradient(90deg,#76ff03,#ffd700)' : 'linear-gradient(90deg,#ffd700,#ff8c00)';
+        }
+
+        function onTO() {
+            if (!qActive) return; qActive = false;
+            const pi = turnQ[tQPos]; const p = players[pi]; const cfg = DCFG[diff];
+            p.pct = Math.max(lavaRise + 2, p.pct - cfg.pen);
+            document.getElementById('btnPass').classList.add('lk');
+            reveal(); updateChip(pi, 'sk'); tQPos++; setTimeout(nextTurn, 1300);
+        }
+
+        function onAns(oi) {
+            if (!qActive || !running) return;
+            const pi = turnQ[tQPos]; const p = players[pi]; if (!p.alive) return;
+            qActive = false; clearInterval(timerInt);
+            const cfg = DCFG[diff]; const ok = oi === curQ.ci;
+            if (ok) { p.pct = Math.min(95, p.pct + cfg.climb); p.score++; }
+            else { p.pct = Math.max(lavaRise + 2, p.pct - cfg.pen); }
+            for (let i = 0; i < 4; i++) {
+                const b = document.getElementById(`ab${i}`); b.classList.add('lk');
+                if (i === curQ.ci) b.classList.add('ok');
+                else if (i === oi && !ok) b.classList.add('no');
+            }
+            document.getElementById('btnPass').classList.add('lk');
+            updateChip(pi, ok ? 'ok' : 'fl'); tQPos++; setTimeout(nextTurn, 1400);
+        }
+
+        function onPass() {
+            if (!qActive || !running) return;
+            const pi = turnQ[tQPos]; const p = players[pi]; if (!p.alive) return;
+            qActive = false; clearInterval(timerInt);
+            const cfg = DCFG[diff];
+            p.pct = Math.max(lavaRise + 2, p.pct - cfg.pen);
+            for (let i = 0; i < 4; i++) document.getElementById(`ab${i}`).classList.add('lk');
+            document.getElementById('btnPass').classList.add('lk');
+            reveal(); updateChip(pi, 'sk'); tQPos++; setTimeout(nextTurn, 1300);
+        }
+
+        function reveal() {
+            for (let i = 0; i < 4; i++) {
+                const b = document.getElementById(`ab${i}`); b.classList.add('lk');
+                if (i === curQ.ci && !b.classList.contains('no')) b.classList.add('rv');
+            }
+        }
+
+        function buildSChips() {
+            const bar = document.getElementById('sBar'); bar.innerHTML = '';
+            players.forEach((p, pi) => {
+                const c = document.createElement('div'); c.className = 'sc'; c.id = `sc${pi}`;
+                c.style.borderColor = p.color + '88'; c.style.color = p.color;
+                c.textContent = `${p.emoji} ${p.sh}`; bar.appendChild(c);
+            });
+        }
+        function updateChip(pi, s) {
+            const c = document.getElementById(`sc${pi}`); if (!c) return;
+            const p = players[pi]; const ic = { active: '🎯', ok: '✅', fl: '❌', sk: '⌛' };
+            c.className = 'sc ' + (s === 'ok' ? 'ok' : s === 'fl' ? 'fl' : s === 'sk' ? 'sk' : '');
+            c.textContent = `${p.emoji} ${p.sh} ${ic[s] || ''}`;
+            c.style.borderColor = p.color + (s === 'active' ? 'ff' : '66');
+            c.style.boxShadow = s === 'active' ? `0 0 10px ${p.color}99` : 'none';
+        }
+
+        // ─── RESULTS ───
+        function showResults() {
+            stop();
+            const s = [...players].sort((a, b) => b.alive - a.alive || b.pct - a.pct);
+            const w = s[0];
+            document.getElementById('rTitle').textContent = w.alive ? `${w.emoji} ¡${w.name} Gana!` : '🌋 ¡La Lava Ganó!';
+            document.getElementById('rSub').textContent = `${totalTurns} turnos · ${diff.toUpperCase()}`;
+            const pod = document.getElementById('podium'); pod.innerHTML = '';
+            const hts = [120, 90, 68, 50], bcs = ['#ffd700', '#c0c0c0', '#cd7f32', '#777'], rnk = ['🥇', '🥈', '🥉', '4°'];
+            s.forEach((p, i) => {
+                const el = document.createElement('div'); el.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:.35rem;';
+                el.innerHTML = `<div>${rnk[i] || '·'}</div>
+      <div style="width:50px;height:50px;border-radius:50%;border:3px solid ${p.color};display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:${p.color}18">${p.emoji}</div>
+      <div style="font-family:'Orbitron',monospace;font-size:.7rem;color:${p.color}">${p.sh}</div>
+      <div style="font-size:.65rem;color:rgba(255,255,255,.4)">✓ ${p.score}</div>
+      <div style="width:68px;height:${hts[i] || 44}px;border-radius:8px 8px 0 0;
+        background:linear-gradient(${bcs[i]}44,${bcs[i]}18);border:2px solid ${bcs[i]}55;
+        display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;color:${bcs[i]};font-size:.9rem">${rnk[i] || '·'}</div>`;
+                pod.appendChild(el);
+            });
+            showScreen('resultScreen');
+        }
+        function endGame() { stop(); if (players.length) showResults(); else goMenu(); }
+
+        // ─── INIT ───
+        setP(2); setD('super');
+    </script>
+</body>
+
+</html>
