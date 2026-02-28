@@ -641,15 +641,24 @@
                 { q: 'Días en una semana', o: ['5', '6', '7', '8'], a: 2 }, { q: 'Meses en un año', o: ['10', '11', '12', '13'], a: 2 },
             ],
             easy: [
-                { q: '12 × 8 = ?', o: ['84', '88', '96', '104'], a: 2 }, { q: '√81 = ?', o: ['7', '8', '9', '10'], a: 2 },
-                { q: '7² = ?', o: ['42', '47', '49', '56'], a: 2 }, { q: '50% de 80 = ?', o: ['30', '35', '40', '45'], a: 2 },
-                { q: '3³ = ?', o: ['9', '18', '27', '33'], a: 2 }, { q: 'MCM de 4 y 6', o: ['8', '10', '12', '24'], a: 2 },
-                { q: 'MCD de 12 y 18', o: ['2', '3', '6', '9'], a: 2 }, { q: '½ + ¼ = ?', o: ['2/6', '3/4', '1/2', '1/6'], a: 1 },
-                { q: '9 × 9 = ?', o: ['72', '81', '90', '99'], a: 1 }, { q: '1000 ÷ 25 = ?', o: ['30', '35', '40', '45'], a: 2 },
-                { q: 'Área rect 6×9 = ?', o: ['48', '52', '54', '60'], a: 2 }, { q: '25% de 200 = ?', o: ['40', '50', '55', '60'], a: 1 },
-                { q: '5! = ?', o: ['60', '100', '120', '150'], a: 2 }, { q: '13² = ?', o: ['149', '169', '196', '121'], a: 1 },
-                { q: '15 × 6 = ?', o: ['80', '85', '90', '95'], a: 2 }, { q: '100 − 37 = ?', o: ['53', '63', '73', '67'], a: 1 },
-                { q: '200 ÷ 8 = ?', o: ['22', '24', '25', '30'], a: 2 }, { q: 'Perímetro □ l=7', o: ['21', '24', '28', '32'], a: 2 },
+                { q: '10 × 5 = ?', o: ['40', '45', '50', '55'], a: 2 },
+                { q: '15 + 15 = ?', o: ['20', '25', '30', '35'], a: 2 },
+                { q: '50 − 25 = ?', o: ['15', '20', '25', '30'], a: 2 },
+                { q: '4 × 8 = ?', o: ['28', '32', '36', '40'], a: 1 },
+                { q: '20 ÷ 4 = ?', o: ['3', '4', '5', '6'], a: 2 },
+                { q: 'Doble de 15 = ?', o: ['25', '30', '35', '40'], a: 1 },
+                { q: 'Mitad de 50 = ?', o: ['20', '25', '30', '35'], a: 1 },
+                { q: '100 − 40 = ?', o: ['40', '50', '60', '70'], a: 2 },
+                { q: '9 × 5 = ?', o: ['35', '40', '45', '50'], a: 2 },
+                { q: '12 + 18 = ?', o: ['28', '30', '32', '34'], a: 1 },
+                { q: '7 × 5 = ?', o: ['30', '35', '40', '45'], a: 1 },
+                { q: '30 ÷ 3 = ?', o: ['8', '9', '10', '12'], a: 2 },
+                { q: 'Triple de 10 = ?', o: ['20', '30', '40', '50'], a: 1 },
+                { q: '25 + 25 = ?', o: ['40', '45', '50', '55'], a: 2 },
+                { q: '60 − 15 = ?', o: ['35', '40', '45', '50'], a: 2 },
+                { q: '8 × 4 = ?', o: ['28', '32', '36', '40'], a: 1 },
+                { q: 'Mitad de 100 = ?', o: ['40', '50', '60', '70'], a: 1 },
+                { q: '6 × 7 = ?', o: ['36', '42', '48', '54'], a: 1 },
             ],
             medium: [
                 { q: 'x + 5 = 12, ¿x?', o: ['5', '6', '7', '8'], a: 2 }, { q: '2x − 3 = 11, x?', o: ['5', '6', '7', '8'], a: 2 },
@@ -907,15 +916,10 @@
         window.addEventListener('resize', () => { if (running) resizeCanvas(); });
 
         function checkElim() {
-            let alive = 0;
             players.forEach(p => {
                 if (!p.alive) return;
                 if (lavaRise >= p.pct) { p.alive = false; updateChip(p.index, 'fl'); }
-                else alive++;
             });
-            if (alive === 0 || (alive <= 1 && nP > 1 && players.some(p => !p.alive))) {
-                running = false; clearInterval(timerInt); setTimeout(showResults, 1200);
-            }
         }
 
         // ─── START ───
@@ -936,7 +940,12 @@
         function nextTurn() {
             if (!running) return;
             while (tQPos < turnQ.length && !players[turnQ[tQPos]].alive) tQPos++;
-            if (tQPos >= turnQ.length) { rebuildTQ(); if (!turnQ.length) { running = false; setTimeout(showResults, 400); return; } }
+            if (tQPos >= turnQ.length) {
+                rebuildTQ();
+                if (turnQ.length <= 1 && nP > 1 || turnQ.length === 0) {
+                    running = false; setTimeout(showResults, 400); return;
+                }
+            }
             const pi = turnQ[tQPos]; const p = players[pi];
             if (!p.alive) { tQPos++; nextTurn(); return; }
             totalTurns++;
