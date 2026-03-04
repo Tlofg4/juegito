@@ -508,14 +508,99 @@
             flex-wrap: wrap;
             justify-content: center;
         }
+
+        /* ══ SCREENSAVER ══ */
+        #ssaver {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 100, 180, 0.32);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.2rem;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .6s ease;
+        }
+
+        #ssaver.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #ssaver img {
+            width: clamp(250px, 50vw, 450px);
+            filter: drop-shadow(0 0 30px rgba(255, 100, 180, .7));
+            animation: paleta-dance 2.4s ease-in-out infinite;
+        }
+
+        @keyframes paleta-dance {
+            0% {
+                transform: translateX(-80px) rotate(-8deg);
+            }
+
+            50% {
+                transform: translateX(80px) rotate(8deg);
+            }
+
+            100% {
+                transform: translateX(-80px) rotate(-8deg);
+            }
+        }
+
+        #ssaver .ss-txt {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 7vw, 3.2rem);
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255, 100, 180, .9), 0 4px 12px rgba(0, 0, 0, .5);
+            text-align: center;
+            padding: 0 1rem;
+            animation: pulse-txt 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-txt {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: .8;
+                transform: scale(1.04);
+            }
+        }
+
+        #ssaver .ss-tap {
+            font-size: .72rem;
+            color: rgba(255, 255, 255, .55);
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 
 <body>
 
+    <!-- SCREENSAVER -->
+    <div id="ssaver" onclick="dismissSS()" ontouchstart="dismissSS()">
+        <img src="paleta.png" alt="paleta" id="ssImg" draggable="false">
+        <div class="ss-txt">🍭 ¡Juega y gánate una paleta! 🍭</div>
+        <div class="ss-tap">Toca para continuar</div>
+    </div>
     <!-- MENU -->
     <div id="menuScreen" class="screen">
         <div class="lfloor"></div>
+        <!-- Botón screensaver (esquina superior derecha) -->
+        <button onclick="showSS()" title="Activar salvapantallas"
+            style="position:absolute;top:.7rem;right:.7rem;background:none;border:none;font-size:1.4rem;cursor:pointer;opacity:.35;transition:opacity .2s;z-index:10;"
+            onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='.35'">🍭</button>
         <h1 class="mtitle">🌋 MateLava</h1>
         <p
             style="color:rgba(255,255,255,.5);letter-spacing:.18em;font-size:.85rem;text-transform:uppercase;margin-bottom:1.6rem;">
@@ -539,16 +624,38 @@
             style="font-size:.68rem;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.45rem">
             Dificultad</p>
         <div class="mrow">
-            <button class="dbt on" data-d="super" onclick="setD('super')">🟢 Súper Fácil</button>
-            <button class="dbt" data-d="easy" onclick="setD('easy')">Fácil</button>
-            <button class="dbt" data-d="medium" onclick="setD('medium')">Medio</button>
-            <button class="dbt" data-d="hard" onclick="setD('hard')">Difícil</button>
+            <button class="dbt on" data-d="super" onclick="setD('super')">Súper Fácil</button>
+            <button class="dbt" data-d="easy" onclick="setD('easy')">Normal</button>
+            <button class="dbt" data-d="medium" onclick="setD('medium')">Difícil</button>
         </div>
         <div class="mrow" style="margin-bottom:0">
             <button class="btn bg" onclick="startGame()">▶ Jugar</button>
             <button class="btn bgr"
                 onclick="alert('Cada jugador recibe una pregunta diferente.\n✓ Correcto → tu barra SUBE.\n✗ Error → tu barra BAJA.\nLa LAVA roja sube lentamente desde abajo.\nSi la lava alcanza tu barra → ¡eliminado!')">?
                 Ayuda</button>
+        </div>
+        <div
+            style="margin-top:1.6rem;padding:.7rem 1.2rem;border-top:1px solid rgba(255,255,255,.07);max-width:400px;width:90%;text-align:center;">
+            <div
+                style="font-size:.58rem;letter-spacing:.15em;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:.45rem;">
+                ✦ Equipo ✦</div>
+            <div style="display:flex;flex-direction:column;gap:.18rem;">
+                <span
+                    style="font-size:.7rem;color:rgba(255,255,255,.38);font-family:'Rajdhani',sans-serif;font-weight:500;">Ayón
+                    Sarabia María Fernanda</span>
+                <span
+                    style="font-size:.7rem;color:rgba(255,255,255,.38);font-family:'Rajdhani',sans-serif;font-weight:500;">Camacho
+                    Vargas Yael Ricardo</span>
+                <span
+                    style="font-size:.7rem;color:rgba(255,255,255,.38);font-family:'Rajdhani',sans-serif;font-weight:500;">Camarena
+                    Pillado Juan Carlos</span>
+                <span
+                    style="font-size:.7rem;color:rgba(255,255,255,.38);font-family:'Rajdhani',sans-serif;font-weight:500;">Figueroa
+                    Eseberre María José</span>
+                <span
+                    style="font-size:.7rem;color:rgba(255,255,255,.38);font-family:'Rajdhani',sans-serif;font-weight:500;">Noriega
+                    Meléndez Hiridyane</span>
+            </div>
         </div>
     </div>
 
@@ -562,6 +669,7 @@
                 </div>
                 <div id="tnum">20</div>
             </div>
+            <button id="muteBtn" class="btn bred" onclick="toggleMute()" style="min-width:2.4rem">🔊</button>
             <button class="btn bred" onclick="endGame()">✕ Salir</button>
         </div>
         <div id="split">
@@ -613,6 +721,45 @@
     </div>
 
     <script>
+        // ─── AUDIO ───
+        const SFX = {
+            correct: new Audio('audio/correct.wav'),
+            wrong: new Audio('audio/wrong.mp3'),
+            timeout: new Audio('audio/timeout.mp3'),
+            eliminated: new Audio('audio/eliminated.wav'),
+            start: new Audio('audio/start.wav'),
+            danger: new Audio('audio/danger.wav'),
+            win: new Audio('audio/win.wav'),
+        };
+        SFX.danger.volume = 0.3;
+        let muted = false, dangerPlaying = false, dangerInt = null;
+        function play(id) {
+            if (muted) return;
+            const s = SFX[id]; if (!s) return;
+            s.currentTime = 0; s.play().catch(() => { });
+        }
+        function toggleMute() {
+            muted = !muted;
+            if (muted) { Object.values(SFX).forEach(s => s.pause()); stopDanger(); }
+            document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
+        }
+        function stopDanger() {
+            dangerPlaying = false;
+            clearInterval(dangerInt); dangerInt = null;
+            SFX.danger.pause();
+        }
+        function updateDanger() {
+            if (muted || !running) { if (dangerPlaying) stopDanger(); return; }
+            const inDanger = players.some(p => p.alive && (p.pct - lavaRise) < 15);
+            if (inDanger && !dangerPlaying) {
+                dangerPlaying = true;
+                SFX.danger.currentTime = 0; SFX.danger.play().catch(() => { });
+                dangerInt = setInterval(() => {
+                    if (!dangerPlaying || muted) return;
+                    SFX.danger.currentTime = 0; SFX.danger.play().catch(() => { });
+                }, 4000);
+            } else if (!inDanger && dangerPlaying) { stopDanger(); }
+        }
         // ─── PLAYERS ───
         const PC = [
             { name: 'Jugador 1', sh: 'J1', color: '#1e6aff', emoji: '🚀' },
@@ -624,23 +771,6 @@
         // ─── QUESTIONS ───
         const QDB = {
             super: [
-                { q: '3 + 4 = ?', o: ['5', '6', '7', '8'], a: 2 }, { q: '10 − 3 = ?', o: ['5', '6', '7', '9'], a: 2 },
-                { q: '5 × 2 = ?', o: ['8', '9', '10', '12'], a: 2 }, { q: '12 ÷ 4 = ?', o: ['2', '3', '4', '5'], a: 1 },
-                { q: 'Doble de 7 = ?', o: ['12', '13', '14', '15'], a: 2 }, { q: 'Mitad de 10 = ?', o: ['3', '4', '5', '6'], a: 2 },
-                { q: '8 + 9 = ?', o: ['15', '16', '17', '18'], a: 2 }, { q: '20 − 8 = ?', o: ['10', '11', '12', '14'], a: 2 },
-                { q: '3 × 5 = ?', o: ['10', '12', '15', '20'], a: 2 }, { q: '15 ÷ 3 = ?', o: ['3', '4', '5', '6'], a: 2 },
-                { q: '6 + 7 = ?', o: ['11', '12', '13', '14'], a: 1 }, { q: '9 − 4 = ?', o: ['3', '4', '5', '6'], a: 2 },
-                { q: '4 × 4 = ?', o: ['12', '14', '16', '18'], a: 2 }, { q: '18 ÷ 2 = ?', o: ['7', '8', '9', '10'], a: 2 },
-                { q: 'Triple de 5 = ?', o: ['10', '12', '15', '20'], a: 2 }, { q: '50 − 20 = ?', o: ['20', '25', '30', '35'], a: 2 },
-                { q: '7 × 3 = ?', o: ['18', '20', '21', '24'], a: 2 }, { q: '24 ÷ 6 = ?', o: ['3', '4', '5', '6'], a: 1 },
-                { q: '11 + 11 = ?', o: ['20', '21', '22', '23'], a: 2 }, { q: '13 − 6 = ?', o: ['5', '6', '7', '8'], a: 2 },
-                { q: '6 × 6 = ?', o: ['30', '34', '36', '38'], a: 2 }, { q: 'Mitad de 18 = ?', o: ['7', '8', '9', '10'], a: 2 },
-                { q: '5 + 8 = ?', o: ['12', '13', '14', '15'], a: 1 }, { q: '16 ÷ 4 = ?', o: ['3', '4', '5', '6'], a: 1 },
-                { q: 'Doble de 9 = ?', o: ['16', '17', '18', '20'], a: 2 }, { q: '30 − 15 = ?', o: ['13', '14', '15', '16'], a: 2 },
-                { q: '2 × 8 = ?', o: ['14', '16', '18', '20'], a: 1 }, { q: '100 ÷ 10 = ?', o: ['5', '8', '10', '20'], a: 2 },
-                { q: 'Días en una semana', o: ['5', '6', '7', '8'], a: 2 }, { q: 'Meses en un año', o: ['10', '11', '12', '13'], a: 2 },
-            ],
-            easy: [
                 { q: '10 × 5 = ?', o: ['40', '45', '50', '55'], a: 2 },
                 { q: '15 + 15 = ?', o: ['20', '25', '30', '35'], a: 2 },
                 { q: '50 − 25 = ?', o: ['15', '20', '25', '30'], a: 2 },
@@ -659,36 +789,69 @@
                 { q: '8 × 4 = ?', o: ['28', '32', '36', '40'], a: 1 },
                 { q: 'Mitad de 100 = ?', o: ['40', '50', '60', '70'], a: 1 },
                 { q: '6 × 7 = ?', o: ['36', '42', '48', '54'], a: 1 },
+                { q: '11 × 3 = ?', o: ['30', '33', '36', '39'], a: 1 },
+                { q: '45 ÷ 9 = ?', o: ['4', '5', '6', '7'], a: 1 },
+                { q: '13 + 28 = ?', o: ['38', '40', '41', '42'], a: 2 },
+                { q: '72 ÷ 8 = ?', o: ['7', '8', '9', '10'], a: 2 },
+                { q: 'Triple de 8 = ?', o: ['18', '21', '24', '27'], a: 2 },
+                { q: '200 − 75 = ?', o: ['115', '120', '125', '130'], a: 2 },
+                { q: '15 × 4 = ?', o: ['50', '55', '60', '65'], a: 2 },
+                { q: '56 ÷ 7 = ?', o: ['6', '7', '8', '9'], a: 2 },
+                { q: '25% de 80 = ?', o: ['15', '20', '25', '30'], a: 1 },
+                { q: '3² + 4² = ?', o: ['14', '20', '25', '30'], a: 2 },
+            ],
+            easy: [
+                { q: 'x + 5 = 12, ¿x?', o: ['5', '6', '7', '8'], a: 2 },
+                { q: '2x − 3 = 11, ¿x?', o: ['5', '6', '7', '8'], a: 2 },
+                { q: 'Área círculo r=5 (π≈3.14)', o: ['62.8', '75.4', '78.5', '80'], a: 2 },
+                { q: 'Pendiente (0,2)→(4,10)', o: ['1', '1.5', '2', '2.5'], a: 2 },
+                { q: '(−3)² = ?', o: ['−9', '6', '9', '12'], a: 2 },
+                { q: 'Hipotenusa triángulo 3−4−?', o: ['5', '6', '7', '8'], a: 0 },
+                { q: '15% de 200 = ?', o: ['20', '25', '30', '35'], a: 2 },
+                { q: '2⁵ = ?', o: ['16', '24', '32', '64'], a: 2 },
+                { q: 'log₁₀(1000) = ?', o: ['2', '3', '4', '10'], a: 1 },
+                { q: 'x² · x³ = ?', o: ['x⁵', 'x⁶', '2x⁵', 'x'], a: 0 },
+                { q: '4! = ?', o: ['8', '16', '24', '32'], a: 2 },
+                { q: 'y = 2x+1, x=4 → y = ?', o: ['7', '8', '9', '10'], a: 2 },
+                { q: 'Factor de x²−9', o: ['(x−3)²', '(x+3)(x−3)', '(x+9)(x−1)', 'x(x−9)'], a: 1 },
+                { q: 'Ángulos de △: 60°, 70°, ?', o: ['40°', '50°', '60°', '70°'], a: 1 },
+                { q: 'Área △ base=8, altura=5', o: ['20', '25', '30', '40'], a: 0 },
+                { q: 'Suma ángulos internos △ = ?', o: ['90°', '180°', '270°', '360°'], a: 1 },
+                { q: '20% de 150 = ?', o: ['20', '25', '30', '35'], a: 2 },
+                { q: '3x + 2 = 11, ¿x?', o: ['2', '3', '4', '5'], a: 1 },
+                { q: 'log₁₀(100) = ?', o: ['1', '2', '3', '10'], a: 1 },
+                { q: 'Perím. rectángulo 5×3', o: ['8', '12', '15', '16'], a: 3 },
+                { q: '(x+2)(x−2) = ?', o: ['x²+4', 'x²−4', 'x²−2', 'x²+2x'], a: 1 },
+                { q: '5² − 3² = ?', o: ['4', '8', '16', '34'], a: 2 },
+                { q: 'Área cuadrado lado=7', o: ['28', '42', '49', '56'], a: 2 },
+                { q: '−2 × (−5) = ?', o: ['−10', '−7', '7', '10'], a: 3 },
             ],
             medium: [
-                { q: 'x + 5 = 12, ¿x?', o: ['5', '6', '7', '8'], a: 2 }, { q: '2x − 3 = 11, x?', o: ['5', '6', '7', '8'], a: 2 },
-                { q: 'Área ⬤ r=5 (π=3.14)', o: ['62.8', '75.4', '78.5', '80'], a: 2 },
-                { q: 'Pendiente (0,2)→(4,10)', o: ['1', '1.5', '2', '2.5'], a: 2 },
-                { q: '(−3)² = ?', o: ['−9', '6', '9', '12'], a: 2 }, { q: 'Hipotenusa 3−4−?', o: ['5', '6', '7', '8'], a: 0 },
-                { q: '15% de 200 = ?', o: ['20', '25', '30', '35'], a: 2 }, { q: '2⁵ = ?', o: ['16', '24', '32', '64'], a: 2 },
-                { q: 'log₁₀(1000) = ?', o: ['2', '3', '4', '10'], a: 1 }, { q: 'sen(30°) = ?', o: ['0', '0.5', '√2/2', '1'], a: 1 },
-                { q: 'cos(60°) = ?', o: ['0', '0.5', '√3/2', '1'], a: 1 }, { q: 'x²·x³ = ?', o: ['x⁵', 'x⁶', '2x⁵', 'x'], a: 0 },
-                { q: '4! = ?', o: ['8', '16', '24', '32'], a: 2 }, { q: 'y=2x+1, x=4 → y?', o: ['7', '8', '9', '10'], a: 2 },
-                { q: 'Factor x²−9', o: ['(x−3)²', '(x+3)(x−3)', '(x+9)(x−1)', '—'], a: 1 },
-                { q: 'Ángulos: 60°,70°,?', o: ['40°', '50°', '60°', '70°'], a: 1 },
-                { q: 'Área △ b=8,h=5', o: ['20', '25', '30', '40'], a: 0 },
-                { q: 'Suma ángulos △ = ?', o: ['90°', '180°', '270°', '360°'], a: 1 },
-            ],
-            hard: [
-                { q: 'x²−5x+6=0', o: ['x=1,6', 'x=2,3', 'x=2,4', 'x=−2,−3'], a: 1 },
-                { q: "f'(3x²) = ?", o: ['3x', '6x', '6x²', 'x³'], a: 1 },
-                { q: 'lím x→0 (senx)/x = ?', o: ['0', '½', '1', '∞'], a: 2 },
-                { q: '∫2x dx = ?', o: ['x+C', '2x+C', 'x²+C', '2x²+C'], a: 2 },
-                { q: 'i² = ?', o: ['1', '−1', 'i', '−i'], a: 1 }, { q: 'Det [[2,1],[3,4]] = ?', o: ['5', '6', '7', '8'], a: 0 },
-                { q: 'log₂(x)=4 → x = ?', o: ['8', '12', '16', '20'], a: 2 }, { q: 'C(5,2) = ?', o: ['8', '10', '12', '20'], a: 1 },
-                { q: 'sen²θ+cos²θ = ?', o: ['0', '1', '2', '−1'], a: 1 }, { q: 'Área △ b=10,h=8', o: ['40', '60', '80', '100'], a: 0 },
-                { q: 'Razón: 2,6,18,54', o: ['2', '3', '4', '6'], a: 1 }, { q: 'tg(45°) = ?', o: ['0', '0.5', '1', '√3'], a: 2 },
-                { q: '1+2+…+10 = ?', o: ['45', '50', '55', '60'], a: 2 },
+                { q: 'x²−5x+6=0, ¿x?', o: ['x=1,6', 'x=2,3', 'x=2,4', 'x=−2,−3'], a: 1 },
+                { q: 'i² = ?', o: ['1', '−1', 'i', '−i'], a: 1 },
+                { q: 'Det [[2,1],[3,4]] = ?', o: ['5', '6', '7', '8'], a: 0 },
+                { q: 'log₂(x)=4 → x = ?', o: ['8', '12', '16', '20'], a: 2 },
+                { q: 'C(5,2) = ?', o: ['8', '10', '12', '20'], a: 1 },
+                { q: 'Área △ base=10, h=8', o: ['40', '60', '80', '100'], a: 0 },
+                { q: 'Razón: 2, 6, 18, 54 → ?', o: ['2', '3', '4', '6'], a: 1 },
+                { q: '1+2+3+…+10 = ?', o: ['45', '50', '55', '60'], a: 2 },
                 { q: 'Factor 4x²−1', o: ['(2x−1)²', '(2x+1)(2x−1)', '(4x+1)(x−1)', '—'], a: 1 },
-                { q: '8^(2/3) = ?', o: ['2', '4', '6', '8'], a: 1 }, { q: '√169 = ?', o: ['11', '12', '13', '14'], a: 2 },
-                { q: "Der. de sen(x) = ?", o: ['−cos(x)', 'cos(x)', '−sen(x)', 'tg(x)'], a: 1 },
-                { q: '3x+2=11 → x = ?', o: ['2', '3', '4', '5'], a: 1 },
-            ]
+                { q: '8^(2/3) = ?', o: ['2', '4', '6', '8'], a: 1 },
+                { q: '√169 = ?', o: ['11', '12', '13', '14'], a: 2 },
+                { q: 'x²+x−6=0, ¿x?', o: ['x=2,−3', 'x=−2,3', 'x=1,−6', 'x=3,−3'], a: 0 },
+                { q: 'C(6,3) = ?', o: ['15', '18', '20', '24'], a: 2 },
+                { q: '2^10 = ?', o: ['512', '1024', '2048', '4096'], a: 1 },
+                { q: '√225 = ?', o: ['13', '14', '15', '16'], a: 2 },
+                { q: 'Factor x²+6x+9', o: ['(x+3)²', '(x+6)(x+3)', '(x−3)²', '(x+9)(x−1)'], a: 0 },
+                { q: 'Sistema: x+y=5, x−y=1 → x=?', o: ['1', '2', '3', '4'], a: 2 },
+                { q: 'P(4,2) = ?', o: ['6', '8', '10', '12'], a: 3 },
+                { q: 'log₃(27) = ?', o: ['2', '3', '4', '9'], a: 1 },
+                { q: 'Suma PA: a₁=2, d=3, n=5', o: ['30', '35', '40', '45'], a: 2 },
+                { q: '(-2)^5 = ?', o: ['−64', '−32', '32', '64'], a: 1 },
+                { q: 'Det [[1,2],[3,4]] = ?', o: ['−4', '−2', '2', '4'], a: 1 },
+                { q: 'Raíces reales de x²+4=0', o: ['±2', '±2i', 'No hay', '0'], a: 2 },
+                { q: '5! ÷ 3! = ?', o: ['10', '20', '40', '60'], a: 1 },
+            ],
         };
 
         // ─── STATE ───
@@ -698,11 +861,12 @@
         let lavaRise = 0, lavaSpd = .25, maxTime = 20;
         let loopId = null, lastTs = 0, timerInt = null, timeLeft = 20;
         let turnQ = [], tQPos = 0, totalTurns = 0, curQ = null;
+        // ─── TIEBREAKER STATE ───
+        let tbMode = false, tbPlayers = [], tbIdx = 0, tbOrigLavaSpd = 0;
         const DCFG = {
             super: { lava: .45, time: 18, climb: 16, pen: 6 },
-            easy: { lava: .65, time: 15, climb: 14, pen: 7 },
-            medium: { lava: 1.2, time: 12, climb: 12, pen: 8 },
-            hard: { lava: 2.2, time: 9, climb: 10, pen: 9 },
+            easy: { lava: .75, time: 15, climb: 14, pen: 7 },
+            medium: { lava: 1.6, time: 11, climb: 12, pen: 9 },
         };
 
         // Canvas
@@ -907,6 +1071,7 @@
                 const dt = Math.min((ts - lastTs) / 1000, .12); lastTs = ts;
                 lavaRise = Math.min(100, lavaRise + lavaSpd * dt);
                 checkElim();
+                updateDanger();
                 drawChart();
                 loopId = requestAnimationFrame(loop);
             }
@@ -916,21 +1081,32 @@
         window.addEventListener('resize', () => { if (running) resizeCanvas(); });
 
         function checkElim() {
+            let anyNewDeath = false;
             players.forEach(p => {
                 if (!p.alive) return;
-                if (lavaRise >= p.pct) { p.alive = false; updateChip(p.index, 'fl'); }
+                if (lavaRise >= p.pct) { p.alive = false; anyNewDeath = true; play('eliminated'); updateChip(p.index, 'fl'); }
             });
+            if (!anyNewDeath) return;
+            const aliveCount = players.filter(p => p.alive).length;
+            // Si quedan 0 o 1 vivos → terminar de inmediato
+            if (aliveCount <= (nP > 1 ? 1 : 0)) {
+                qActive = false;
+                clearInterval(timerInt);
+                setTimeout(showResults, 600);
+            }
         }
 
         // ─── START ───
         function startGame() {
             running = true; lavaRise = 0; gQIdx = 0; totalTurns = 0;
+            dangerPlaying = false; SFX.danger.pause();
             const cfg = DCFG[diff]; lavaSpd = cfg.lava; maxTime = cfg.time;
             bank = [...QDB[diff], ...QDB[diff], ...QDB[diff]].sort(() => Math.random() - .5);
             players = [];
-            for (let i = 0; i < nP; i++) players.push({ ...PC[i], index: i, pct: 15, score: 0, alive: true });
+            for (let i = 0; i < nP; i++) players.push({ ...PC[i], index: i, pct: 15, score: 0, alive: true, errors: 0 });
             showScreen('gameScreen');
             buildSChips();
+            play('start');
             startLoop();
             rebuildTQ(); setTimeout(nextTurn, 200);
         }
@@ -968,7 +1144,7 @@
             updateChip(pi, 'active');
             timeLeft = maxTime; updTimer(); clearInterval(timerInt);
             setTimeout(() => { qActive = true; }, 60);
-            timerInt = setInterval(() => { timeLeft--; updTimer(); if (timeLeft <= 0) { clearInterval(timerInt); onTO(); } }, 1000);
+            timerInt = setInterval(() => { timeLeft--; updTimer(); if (timeLeft <= 0) { clearInterval(timerInt); play('timeout'); onTO(); } }, 1000);
         }
 
         function updTimer() {
@@ -982,19 +1158,52 @@
 
         function onTO() {
             if (!qActive) return; qActive = false;
+            if (tbMode) {
+                players[tbPlayers[tbIdx].index].errors++;
+                reveal();
+                document.getElementById('btnPass').classList.add('lk');
+                tbIdx++;
+                setTimeout(nextTBTurn, 1300);
+                return;
+            }
             const pi = turnQ[tQPos]; const p = players[pi]; const cfg = DCFG[diff];
             p.pct = Math.max(lavaRise + 2, p.pct - cfg.pen);
+            p.errors++;
             document.getElementById('btnPass').classList.add('lk');
             reveal(); updateChip(pi, 'sk'); tQPos++; setTimeout(nextTurn, 1300);
         }
 
         function onAns(oi) {
             if (!qActive || !running) return;
+
+            if (tbMode) {
+                qActive = false; clearInterval(timerInt);
+                const p = tbPlayers[tbIdx];
+                const ok = oi === curQ.ci;
+                for (let i = 0; i < 4; i++) {
+                    const b = document.getElementById(`ab${i}`); b.classList.add('lk');
+                    if (i === curQ.ci) b.classList.add('ok');
+                    else if (i === oi && !ok) b.classList.add('no');
+                }
+                document.getElementById('btnPass').classList.add('lk');
+                if (ok) {
+                    play('correct');
+                    tbMode = false; lavaSpd = tbOrigLavaSpd;
+                    setTimeout(() => showResults(p), 1400);
+                } else {
+                    play('wrong');
+                    players[p.index].errors++;
+                    tbIdx++;
+                    setTimeout(nextTBTurn, 1400);
+                }
+                return;
+            }
+
             const pi = turnQ[tQPos]; const p = players[pi]; if (!p.alive) return;
             qActive = false; clearInterval(timerInt);
             const cfg = DCFG[diff]; const ok = oi === curQ.ci;
-            if (ok) { p.pct = Math.min(95, p.pct + cfg.climb); p.score++; }
-            else { p.pct = Math.max(lavaRise + 2, p.pct - cfg.pen); }
+            if (ok) { p.pct = Math.min(95, p.pct + cfg.climb); p.score++; play('correct'); }
+            else { p.pct = Math.max(lavaRise + 2, p.pct - cfg.pen); play('wrong'); p.errors++; }
             for (let i = 0; i < 4; i++) {
                 const b = document.getElementById(`ab${i}`); b.classList.add('lk');
                 if (i === curQ.ci) b.classList.add('ok');
@@ -1010,6 +1219,8 @@
             qActive = false; clearInterval(timerInt);
             const cfg = DCFG[diff];
             p.pct = Math.max(lavaRise + 2, p.pct - cfg.pen);
+            p.errors++;
+            play('wrong');
             for (let i = 0; i < 4; i++) document.getElementById(`ab${i}`).classList.add('lk');
             document.getElementById('btnPass').classList.add('lk');
             reveal(); updateChip(pi, 'sk'); tQPos++; setTimeout(nextTurn, 1300);
@@ -1039,12 +1250,90 @@
             c.style.boxShadow = s === 'active' ? `0 0 10px ${p.color}99` : 'none';
         }
 
+        // ─── TIEBREAKER ───
+        function startTiebreaker(tied) {
+            tbMode = true;
+            tbPlayers = tied;
+            tbIdx = 0;
+            tbOrigLavaSpd = lavaSpd;
+            lavaSpd = 0; // congela la lava durante el desempate
+            maxTime = 5;
+            running = true;
+            if (gQIdx >= bank.length) gQIdx = 0;
+            curQ = shuffleQ(bank[gQIdx++]);
+            nextTBTurn();
+        }
+
+        function nextTBTurn() {
+            // Si todos fallaron en esta ronda → nueva pregunta, reinicia ronda
+            if (tbIdx >= tbPlayers.length) {
+                tbIdx = 0;
+                if (gQIdx >= bank.length) gQIdx = 0;
+                curQ = shuffleQ(bank[gQIdx++]);
+            }
+            const p = tbPlayers[tbIdx];
+            const pi = p.index;
+            // Actualizar UI igual que un turno normal
+            document.getElementById('qText').textContent = curQ.text;
+            for (let i = 0; i < 4; i++) {
+                const b = document.getElementById(`ab${i}`); b.className = 'ab'; b.style.setProperty('--pc', p.color);
+                document.getElementById(`at${i}`).textContent = curQ.opts[i];
+                document.getElementById(`al${i}`).style.cssText = `background:${p.color}2a;color:${p.color}`;
+            }
+            document.getElementById('btnPass').classList.add('lk'); // sin pasar en desempate
+            const bn = document.getElementById('turnBanner');
+            bn.style.borderColor = p.color;
+            bn.style.background = `linear-gradient(135deg,${p.color}22,rgba(0,0,0,.55))`;
+            document.getElementById('tTag').textContent = '⚡ DESEMPATE · RONDA RELÁMPAGO';
+            document.getElementById('tName').textContent = p.name;
+            document.getElementById('tName').style.color = p.color;
+            document.getElementById('tEmoji').textContent = p.emoji;
+            updateChip(pi, 'active');
+            timeLeft = 5; updTimer(); clearInterval(timerInt);
+            setTimeout(() => { qActive = true; }, 60);
+            timerInt = setInterval(() => { timeLeft--; updTimer(); if (timeLeft <= 0) { clearInterval(timerInt); play('timeout'); onTO(); } }, 1000);
+        }
+
         // ─── RESULTS ───
-        function showResults() {
+        function showResults(tbWinner) {
+            // Detectar empate antes de parar
+            if (!tbWinner && !tbMode) {
+                const alive = players.filter(p => p.alive);
+                if (alive.length >= 2) {
+                    const topPct = Math.max(...alive.map(p => p.pct));
+                    const tied = alive.filter(p => p.pct === topPct);
+                    if (tied.length >= 2) {
+                        // Auto-desempate 1: menos errores
+                        const minErr = Math.min(...tied.map(p => p.errors));
+                        const byErr = tied.filter(p => p.errors === minErr);
+                        if (byErr.length === 1) { tbWinner = byErr[0]; }
+                        else {
+                            // Auto-desempate 2: más aciertos
+                            const maxScore = Math.max(...byErr.map(p => p.score));
+                            const byScore = byErr.filter(p => p.score === maxScore);
+                            if (byScore.length === 1) { tbWinner = byScore[0]; }
+                            else {
+                                // Empate real → ronda relámpago
+                                startTiebreaker(byScore);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
             stop();
-            const s = [...players].sort((a, b) => b.alive - a.alive || b.pct - a.pct);
+            stopDanger();
+            play('win');
+            // Construir ranking con el ganador del desempate al frente si aplica
+            let s = [...players].sort((a, b) => b.alive - a.alive || b.pct - a.pct);
+            if (tbWinner) {
+                s = s.filter(p => p.index !== tbWinner.index);
+                s.unshift(players[tbWinner.index]);
+            }
             const w = s[0];
-            document.getElementById('rTitle').textContent = w.alive ? `${w.emoji} ¡${w.name} Gana!` : '🌋 ¡La Lava Ganó!';
+            document.getElementById('rTitle').textContent = w.alive
+                ? `${w.emoji} ¡${w.name} Gana!${tbWinner ? ' ⚡ (Desempate)' : ''}`
+                : '🌋 ¡La Lava Ganó!';
             document.getElementById('rSub').textContent = `${totalTurns} turnos · ${diff.toUpperCase()}`;
             const pod = document.getElementById('podium'); pod.innerHTML = '';
             const hts = [120, 90, 68, 50], bcs = ['#ffd700', '#c0c0c0', '#cd7f32', '#777'], rnk = ['🥇', '🥈', '🥉', '4°'];
@@ -1053,7 +1342,7 @@
                 el.innerHTML = `<div>${rnk[i] || '·'}</div>
       <div style="width:50px;height:50px;border-radius:50%;border:3px solid ${p.color};display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:${p.color}18">${p.emoji}</div>
       <div style="font-family:'Orbitron',monospace;font-size:.7rem;color:${p.color}">${p.sh}</div>
-      <div style="font-size:.65rem;color:rgba(255,255,255,.4)">✓ ${p.score}</div>
+      <div style="font-size:.6rem;color:rgba(255,255,255,.4)">✓${p.score} ✗${p.errors}</div>
       <div style="width:68px;height:${hts[i] || 44}px;border-radius:8px 8px 0 0;
         background:linear-gradient(${bcs[i]}44,${bcs[i]}18);border:2px solid ${bcs[i]}55;
         display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;color:${bcs[i]};font-size:.9rem">${rnk[i] || '·'}</div>`;
@@ -1065,6 +1354,52 @@
 
         // ─── INIT ───
         setP(2); setD('super');
+
+        // ─── SCREENSAVER ───
+        const SS_DELAY = 15000; // 15 segundos de inactividad
+        let ssTimer = null;
+        const ssEl = document.getElementById('ssaver');
+
+        function showSS() {
+            if (running) return;
+            ssEl.classList.add('show');
+        }
+
+        function dismissSS() {
+            ssEl.classList.remove('show');
+            resetSS();
+        }
+
+        function resetSS() {
+            clearTimeout(ssTimer);
+            if (!running) {
+                ssTimer = setTimeout(showSS, SS_DELAY);
+            }
+        }
+
+        // Actividades que resetean el timer
+        ['click', 'touchstart', 'scroll', 'mousedown'].forEach(ev => {
+            document.addEventListener(ev, () => { if (ssEl.classList.contains('show')) dismissSS(); else resetSS(); }, { passive: true });
+        });
+        document.addEventListener('mousemove', () => { if (!ssEl.classList.contains('show')) resetSS(); }, { passive: true });
+
+        // Tecla P = activar/cerrar screensaver
+        document.addEventListener('keydown', e => {
+            const isP = e.key.toLowerCase() === 'p' || e.code === 'KeyP';
+            if (isP) {
+                e.preventDefault();
+                ssEl.classList.contains('show') ? dismissSS() : showSS();
+                return;
+            }
+            if (ssEl.classList.contains('show')) dismissSS(); else resetSS();
+        });
+
+        // Poner en marcha al cargar (solo si el mens es visible)
+        resetSS();
+
+        // Cuando el juego termina y vuelve al menú, reiniciar el timer
+        const _goMenu = goMenu;
+        goMenu = function () { _goMenu(); setTimeout(resetSS, 300); };
     </script>
 </body>
 
