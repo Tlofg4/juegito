@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartel HTML - 75x75cm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .cartel {
+            width: 75cm;
+            height: 75cm;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cartel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        .cartel::after {
+            content: '</>';
+            position: absolute;
+            bottom: 40px;
+            right: 60px;
+            font-size: 180px;
+            color: rgba(255,255,255,0.1);
+            font-weight: bold;
+        }
+        
+        .contenido {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .titulo {
+            font-size: 160px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+            letter-spacing: 10px;
+        }
+        
+        .subtitulo {
+            font-size: 50px;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 60px;
+            font-weight: 300;
+        }
+        
+        .seccion {
+            background: rgba(255,255,255,0.95);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .seccion h2 {
+            font-size: 55px;
+            color: #667eea;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .icono {
+            font-size: 60px;
+            margin-right: 20px;
+        }
+        
+        .lista {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .lista li {
+            font-size: 40px;
+            color: #333;
+            margin-bottom: 20px;
+            padding-left: 50px;
+            position: relative;
+            line-height: 1.4;
+        }
+        
+        .lista li::before {
+            content: '▸';
+            position: absolute;
+            left: 10px;
+            color: #764ba2;
+            font-size: 45px;
+        }
+        
+        .codigo {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 30px;
+            border-radius: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 35px;
+            margin-top: 25px;
+            line-height: 1.6;
+        }
+        
+        .tag {
+            color: #ff79c6;
+        }
+        
+        .attr {
+            color: #50fa7b;
+        }
+        
+        .valor {
+            color: #f1fa8c;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .cartel {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cartel">
+        <div class="contenido">
+            <h1 class="titulo">HTML</h1>
+            <p class="subtitulo">HyperText Markup Language</p>
+            
+            <div class="seccion">
+                <h2><span class="icono">📝</span> ¿Qué es HTML?</h2>
+                <ul class="lista">
+                    <li>Lenguaje de <strong>marcado</strong> estándar</li>
+                    <li>Crea la <strong>estructura</strong> de páginas web</li>
+                    <li>Usa <strong>etiquetas</strong> para definir elementos</li>
+                </ul>
+            </div>
+            
+            <div class="seccion">
+                <h2><span class="icono">🏗️</span> Estructura Básica</h2>
+                <div class="codigo">
+<span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="valor">"es"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;head&gt;</span>
+    <span class="tag">&lt;title&gt;</span>Mi Página<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;/head&gt;</span>
+  <span class="tag">&lt;body&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>¡Hola Mundo!<span class="tag">&lt;/h1&gt;</span>
+  <span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span>
+                </div>
+            </div>
+            
+            <div class="seccion">
+                <h2><span class="icono">🔧</span> Etiquetas Principales</h2>
+                <ul class="lista">
+                    <li><strong>&lt;h1&gt; - &lt;h6&gt;</strong> Encabezados</li>
+                    <li><strong>&lt;p&gt;</strong> Párrafos</li>
+                    <li><strong>&lt;a&gt;</strong> Enlaces</li>
+                    <li><strong>&lt;img&gt;</strong> Imágenes</li>
+                    <li><strong>&lt;div&gt;</strong> Contenedores</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
